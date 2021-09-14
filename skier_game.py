@@ -7,6 +7,7 @@ import sys
 import cfg 
 import pygame 
 import random 
+from pygame.pypm import TRUE
 
 class SkierClass(pygame.sprite.Sprite):
     def __init__(self):
@@ -34,7 +35,7 @@ class SkierClass(pygame.sprite.Sprite):
     def move(self):
         self.rect.centerx += self.speed[0]
         self.rect.centerx = max(20, self.rect.centerx)
-        self.rect.center = min(620, self.rect.centerx)
+        self.rect.centerx = min(620, self.rect.centerx)
         
     
     def setFall(self):
@@ -115,12 +116,97 @@ def showScore(screen, score, pos=(10, 10)):
     
 def updateFram(screen, obstacles, skier, score):
     screen.fill((255,255,255))
-    obstacles.draw()
+    obstacles.draw(screen)
     screen.blit(skier.image, skier.rect)
     showScore(screen, score)
     pygame.display.update()
 
+
+def main():
+    
+    pygame.init()
+    pygame.mixer.init()
+    pygame.mixer.music.load(cfg.BGMPATH)
+    pygame.mixer.music.set_volume(0.4)
+    pygame.mixer.music.play(-1)
+    
+    screen = pygame.display.set_mode(cfg.SCREENSIZE)
+    pygame.display.set_caption("Skier Game")
+    
+    ShowStartInterface(screen, cfg.SCREENSIZE)
+    
+    skier = SkierClass()
+    
+    obstacles0 = creatObstacles(20, 29)
+    obstacles1 = creatObstacles(10, 19)
+    obstaclesflag = 0
+    obstacles = AddObstacles(obstacles0, obstacles1)
+    
+    clock = pygame.time.Clock()
+    
+    distance = 0
+    score = 0
+    speed = [0, 6]
+    
+    while True:
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    speed = skier.turn(-1)
+                elif event.key == pygame.K_RIGHT or event.key == pygame.KEY_d:
+                    speed = skier.turn(1)
+        
+        skier.move()
+        distance += speed[1]
+        if distance >= 620 and obstaclesflag ==0:
+            obstaclesflag = 1
+            obstacles0 = creatObstacles(20, 29)
+            obstacles = AddObstacles(obstacles0, obstacles1)
             
+        if distance >= 1280 and obstaclesflag == 1:
+            obstaclesflag = 0
+            distance -= 1280
+            for obstacle in obstacles0:
+                obstacle.location[1] = obstacle.location[1] - 1280
+                obstacles = AddObstacles(obstacles0, obstacles1)
+                
+        for obstacle in obstacles:
+            obstacle.move(distance)
+            
+        hit_obstacles = pygame.sprite.spritecollide(skier, obstacles, False)
+        
+        if hit_obstacles:
+            if hit_obstacles[0].attribute == "tree" and not hit_obstacles[0].passed:
+                score -= 50
+                skier.setFall()
+                updateFram(screen, obstacles, skier, score)
+                pygame.time.delay(100)
+                skier.setForward()
+                speed = [0, 6]
+                hit_obstacles[0].passed = True 
+            elif hit_obstacles[0].attrivute == "flag" and not hit_obstacles[0].passed:
+                score += 10
+                obstacle.remove(hit_obstacles[0])        
+        
+        
+        updateFram(screen, obstacles, skier, score)
+        clock.tick(cfg.FPS)
+        
+            
+            
+                
+                
+                    
+                
+    
+    
+
+if __name__ == '__main__':
+    main()
             
             
     
