@@ -188,7 +188,7 @@ def main():
                 skier.setForward()
                 speed = [0, 6]
                 hit_obstacles[0].passed = True 
-            elif hit_obstacles[0].attrivute == "flag" and not hit_obstacles[0].passed:
+            elif hit_obstacles[0].attribute == "flag" and not hit_obstacles[0].passed:
                 score += 10
                 obstacle.remove(hit_obstacles[0])        
         
