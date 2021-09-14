@@ -84,6 +84,42 @@ def AddObstacles(obstacles0, obstacles1):
         obstacles.add(obstacle)
     return obstacles
             
+    
+def ShowStartInterface(screen, screensize):
+    screen.fill((255, 255, 255))
+    tfont = pygame.font.Font(cfg.FONTPATH, screensize[0]//5)
+    cfont = pygame.font.Font(cfg.FONTPATH, screensize[0]//20)
+    title = tfont.render(u"Skier Game", True, (255, 0, 0))
+    content = cfont.render(u"Press any key to START", True, (0, 0, 255))
+    trect = title.get_rect()
+    trect.midtop = (screensize[0]/2, screensize[1]/5)
+    crect = content.get_rect()
+    crect.midtop = (screensize[0]/2, screensize[1]/2)
+    screen.blit(title, trect)
+    screen.blit(content, crect)
+    
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                return
+        
+        pygame.display.update()
+        
+def showScore(screen, score, pos=(10, 10)):
+    font = pygame.font.Font(cfg.FONTPATH, 30)
+    score_text = font.render('Score: %s' % score, True, (0,0,0))
+    screen.blit(score_text, pos)
+    
+def updateFram(screen, obstacles, skier, score):
+    screen.fill((255,255,255))
+    obstacles.draw()
+    screen.blit(skier.image, skier.rect)
+    showScore(screen, score)
+    pygame.display.update()
+
             
             
             
