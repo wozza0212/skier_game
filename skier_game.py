@@ -190,7 +190,7 @@ def main():
                 hit_obstacles[0].passed = True 
             elif hit_obstacles[0].attribute == "flag" and not hit_obstacles[0].passed:
                 score += 10
-                obstacle.remove(hit_obstacles[0])        
+                obstacles.remove(hit_obstacles[0])        
         
         
         updateFram(screen, obstacles, skier, score)
